@@ -229,9 +229,8 @@ opt -load llvm-build/lib/gsohc_opt.so \
 To produce LLVM IR from a CUDA source file with Clang before running the pass:
 
 ```bash
-# Compile CUDA to LLVM IR (host-side only)
-clang++ -x cuda --cuda-host-only -emit-llvm -S \
-        -o input.ll your_program.cu
+# Compile CUDA to LLVM IR
+clang++ -x cuda -emit-llvm -S your_program.cu
 
 # Run the GSOHC pass
 opt -load llvm-build/lib/gsohc_opt.so \
@@ -244,7 +243,7 @@ opt -load llvm-build/lib/gsohc_opt.so \
 GSOHC registers itself at `PassManagerBuilder::EP_ModuleOptimizerEarly` and runs automatically when the shared library is loaded through Clang. This integrates the pass directly into the standard compilation pipeline:
 
 ```bash
-clang++ -x cuda --cuda-host-only \
+clang++ -x cuda \
         -Xclang -load -Xclang llvm-build/lib/gsohc_opt.so \
         -O2 -o output your_program.cu
 ```
@@ -252,7 +251,6 @@ clang++ -x cuda --cuda-host-only \
 **Input requirements:**
 
 - CUDA source compiled with Clang (not nvcc), so that GPU kernel calls appear with `_device_stub_` linkage names in the IR
-- Host-side compilation only (`--cuda-host-only`); the pass analyses and transforms the CPU-side IR
 
 **Output:**
 
